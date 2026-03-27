@@ -59,3 +59,25 @@ export async function listFiles(projectId, path, ref) {
     type: item.type // "blob" = file, "tree" = directory
   }));
 }
+
+export async function searchCode(project, searchKey) {
+  // project 就是 GitLab 的项目标识，跟 getFile/listFiles 里的 projectId 一样
+  // 比如 "live-activity/nuwa" 或者数字 ID "12345"
+  const encodedProject = encodeURIComponent(project);
+  const data = await request(
+    `/projects/${encodedProject}/search?scope=blobs&search=${encodeURIComponent(searchKey)}`
+  );
+
+  // GitLab search API 直接返回数组，不是 { items: [] }
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error(`"${searchKey}" 在项目中没有找到喔～`);
+  }
+
+  return data.map((i) => ({
+    filename: i.filename,
+    path: i.path,
+    ref: i.ref,
+    startline: i.startline,
+    data: i.data
+  }));
+}

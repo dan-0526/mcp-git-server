@@ -139,4 +139,30 @@ export function registerTools(server) {
       }
     }
   );
+
+  server.tool(
+    'gitlab_search_code',
+    {
+      project: z
+        .string()
+        .describe("Project ID or path, e.g. 'live-activity/nuwa'"),
+      searchKey: z.string().describe('Search keyword')
+    },
+    async ({ project, searchKey }) => {
+      try {
+        const results = await gitlab.searchCode(project, searchKey);
+        const list = results
+          .map(
+            (f) =>
+              `📄 ${f.path}:${f.startline}\n   ${f.data.trim().slice(0, 120)}`
+          )
+          .join('\n\n');
+        return { content: [{ type: 'text', text: list || '没有找到结果' }] };
+      } catch (err) {
+        return {
+          content: [{ type: 'text', text: `❌ Error: ${err.message}` }]
+        };
+      }
+    }
+  );
 }
