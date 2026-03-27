@@ -60,3 +60,20 @@ export async function listFiles(owner, repo, path, ref) {
     size: item.size
   }));
 }
+
+export async function searchCode(searchKey, repo) {
+  const data = await request(
+    `/search/code?q=${encodeURIComponent(searchKey)}${repo ? `+repo:${encodeURIComponent(repo)}` : ''}`
+  );
+
+  if (!data.items || data.items.length === 0) {
+    throw new Error(`SearchKey "${searchKey}" 没有找到喔～`);
+  }
+
+  const content = data.items.map((i) => ({
+    name: i.name,
+    path: i.path,
+    repo: i.repository.full_name
+  }));
+  return { content };
+}

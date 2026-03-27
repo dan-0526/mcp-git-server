@@ -40,6 +40,27 @@ export function registerTools(server) {
   );
 
   server.tool(
+    'github_search_code',
+    {
+      searchKey: z.string().describe('Repository searchKey'),
+      repo: z.string().optional().describe('Limit to repo, e.g. facebook/react')
+    },
+    async ({ searchKey, repo }) => {
+      try {
+        const result = await github.searchCode(searchKey, repo);
+        const list = result.content
+          .map((f) => `📄 ${f.repo} → ${f.path}`)
+          .join('\n');
+        return { content: [{ type: 'text', text: list || '没有找到结果' }] };
+      } catch (err) {
+        return {
+          content: [{ type: 'text', text: `❌ Error: ${err.message}` }]
+        };
+      }
+    }
+  );
+
+  server.tool(
     'github_list_files',
     {
       owner: z.string().describe('Repository owner'),
