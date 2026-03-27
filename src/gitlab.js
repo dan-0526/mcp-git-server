@@ -2,6 +2,8 @@
  * GitLab API 封装
  */
 
+import { getFetchOptions } from './proxy.js';
+
 const GITLAB_TOKEN = process.env.GITLAB_TOKEN || '';
 const GITLAB_URL = process.env.GITLAB_URL || 'https://gitlab.com';
 
@@ -11,7 +13,11 @@ async function request(path) {
     headers['PRIVATE-TOKEN'] = GITLAB_TOKEN;
   }
 
-  const res = await fetch(`${GITLAB_URL}/api/v4${path}`, { headers });
+  const url = `${GITLAB_URL}/api/v4${path}`;
+  const res = await fetch(url, {
+    headers,
+    ...getFetchOptions(url)
+  });
   if (!res.ok) {
     const body = await res.text();
     throw new Error(`GitLab API ${res.status}: ${body}`);

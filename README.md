@@ -2,7 +2,7 @@
 
 通过 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) 获取 GitHub / GitLab 仓库代码的 Server。
 
-支持所有兼容 MCP 的客户端：Kiro、Claude Desktop、Cursor、VS Code (Copilot) 等。
+支持所有兼容 MCP 的客户端：Kiro、Codex、Claude Desktop、Cursor、VS Code (Copilot) 等。
 
 ## 提供的工具
 

@@ -2,6 +2,8 @@
  * GitHub API 封装
  */
 
+import { getFetchOptions } from './proxy.js';
+
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 const GITHUB_API = 'https://api.github.com';
 
@@ -14,7 +16,11 @@ async function request(path) {
     headers.Authorization = `Bearer ${GITHUB_TOKEN}`;
   }
 
-  const res = await fetch(`${GITHUB_API}${path}`, { headers });
+  const url = `${GITHUB_API}${path}`;
+  const res = await fetch(url, {
+    headers,
+    ...getFetchOptions(url)
+  });
   if (!res.ok) {
     const body = await res.text();
     throw new Error(`GitHub API ${res.status}: ${body}`);
